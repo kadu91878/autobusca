@@ -88,7 +88,7 @@ const busca = ref("");
 }
 
 .link:hover{
-  color: white;
+  color: #fff;
 }
 
 ._title{
