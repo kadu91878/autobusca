@@ -32,7 +32,7 @@ const placa = ref("");
       </div>
     </div>
     <div class="right-side">
-      <img src="../../public/3286556.jpg" alt="" />
+      <img src="/3286556.jpg" alt="" />
     </div>
   </div>
 </template>
