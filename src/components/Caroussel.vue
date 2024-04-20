@@ -1,11 +1,17 @@
 <script setup lang="ts">
 //imports
 import ImagemService from "@/application/ImagemService";
-import { ref, onMounted } from "vue";
+import VeiculoDetailService from "@/application/VeiculoDetailService";
+import { onMounted, ref, onBeforeMount } from "vue";
+import type { VeiculoComLocalizacao } from "@/types/VeiculoLocalizacao";
+import { TopSpeed20Regular, Location20Regular } from "@vicons/fluent";
+import { DateRangeTwotone } from "@vicons/material";
+import { ManualGearbox } from "@vicons/tabler";
 
 //refs
 const listaPlacas = ref([]);
 const listaImagens = ref([]);
+const listaPaginadaCarros = ref<VeiculoComLocalizacao[]>([]);
 
 //functions
 async function getPlacas() {
@@ -28,38 +34,182 @@ async function getImages(placa: string) {
   }
 }
 
-function printarImagens(){
-    listaImagens.value.forEach(element => {
-        console.log(element.imagens[0]);
-    });
+async function getListaPaginadaCarros() {
+  try {
+    const data = await VeiculoDetailService.listarDetalhesPaginado();
+    listaPaginadaCarros.value = data;
+  } catch (error) {
+    console.error("Erro ao obter lista de carros:", error);
+  }
+}
 
+async function printarDetalhes() {
+  await getListaPaginadaCarros();
+  console.log(listaPaginadaCarros.value);
 }
 
 onMounted(async () => {
   await getPlacas();
-  // Iterar sobre cada placa e obter imagens
-  for (const placa of listaPlacas.value) {
-    await getImages(placa);
-  }
+  await Promise.all(listaPlacas.value.map((placa) => getImages(placa)));
+  await getListaPaginadaCarros();
+  console.log(listaPaginadaCarros.value[0].ano_modelo);
 });
 </script>
 <template>
-  Hello
-
-  <n-button @click="printarImagens()"> </n-button>
-  <n-carousel show-arrow>
-    <img v-for="(img, index) in listaImagens"
-      class="carousel-img"
-      :src=img.imagens[0]
-    >
-   
-  </n-carousel>
+  <div class="container">
+    <div class="cards" v-for="(item, index) in listaPaginadaCarros">
+      <n-card class="card">
+        <template #cover class="cover">
+          <div class="card-image">
+            <img :src="listaImagens[index].imagens[0]" alt="" />
+          </div>
+        </template>
+        <div class="details">
+          <div class="top">
+            <div class="title">
+              <p>{{ item.nome_veiculo }}</p>
+            </div>
+            <div class="preco">
+              <p>R$ {{ item.preco }}</p>
+            </div>
+          </div>
+          <n-divider style="margin:0;" />
+          <div class="bottom">
+            <div class="info">
+              <div class="left">
+                <div class="quilometragem">
+                  <n-icon size="12px" :component="TopSpeed20Regular" />
+                  <p>{{ item.quilometragem }} km</p>
+                </div>
+                <div class="ano-modelo">
+                  <n-icon size="12px" :component="DateRangeTwotone" />
+                  <p>{{ item.ano_modelo }}</p>
+                </div>
+              </div>
+              <div class="right">
+                <div class="localizacao">
+                  <n-icon size="12px" :component="Location20Regular" />
+                  <p>{{ item.cidade }} - {{ item.estado }}</p>
+                </div>
+                <div class="cambio">
+                  <n-icon size="12px" :component="ManualGearbox" />
+                  <p>{{ item.tipo_cambio }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </n-card>
+    </div>
+  </div>
+  <!-- <n-button @click="printarDetalhes()"> </n-button> -->
+  <!-- <n-carousel show-arrow>
+      <img
+        v-for="(img, index) in listaImagens"
+        class="carousel-img"
+        :src="img.imagens[0]"
+      />
+    </n-carousel> -->
 </template>
 
 <style scoped>
-.carousel-img {
-  width: 100%;
-  height: 240px;
+.cards {
+  width: calc(
+    60vh - 20px
+  ); /* ajuste a largura do card para ser 25% da altura da tela (menos a margem) */
+  max-width: 312px; /* tamanho máximo do card */
+  margin: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0.25rem 0.25rem 1rem 0 #73738040;
+}
+
+.card-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30%; /* altura da capa em relação à altura do card */
+  overflow: hidden; /* garantir que a imagem não ultrapasse o container */
+}
+.card-image img {
   object-fit: cover;
+  height: 30vh;
+}
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.info {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.title {
+  font-family: "Hind";
+  font-size: 15px;
+}
+
+.preco {
+  font-family: "Hind";
+  font-weight: 900;
+  font-size: 20px;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.top {
+
+}
+.right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.quilometragem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+}
+.ano-modelo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 12px;
+  gap: 5px;
+}
+
+.cambio {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 12px;
+  gap: 5px;
+}
+
+.localizacao {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 12px;
+  gap: 5px;
 }
 </style>
