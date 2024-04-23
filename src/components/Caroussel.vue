@@ -57,49 +57,65 @@ onMounted(async () => {
 </script>
 <template>
   <div class="container">
-    <div class="cards" v-for="(item, index) in listaPaginadaCarros">
-      <n-card class="card">
-        <template #cover class="cover">
-          <div class="card-image">
-            <img :src="listaImagens[index].imagens[0]" alt="" />
-          </div>
-        </template>
-        <div class="details">
-          <div class="top">
-            <div class="title">
-              <p>{{ item.nome_veiculo }}</p>
+    <div class="container-title">
+      <p>Confira nossas ofertas</p>
+    </div>
+    <div class="container-cards">
+      <div class="cards" v-for="(item, index) in listaPaginadaCarros">
+        <n-card class="card">
+          <template #cover class="cover">
+            <div class="card-image">
+              <img :src="listaImagens[index].imagens[0]" alt="" />
             </div>
-            <div class="preco">
-              <p>R$ {{ item.preco }}</p>
-            </div>
-          </div>
-          <n-divider style="margin:0;" />
-          <div class="bottom">
-            <div class="info">
-              <div class="left">
-                <div class="quilometragem">
-                  <n-icon size="12px" :component="TopSpeed20Regular" />
-                  <p>{{ item.quilometragem }} km</p>
-                </div>
-                <div class="ano-modelo">
-                  <n-icon size="12px" :component="DateRangeTwotone" />
-                  <p>{{ item.ano_modelo }}</p>
-                </div>
+          </template>
+          <div class="details">
+            <div class="top">
+              <div class="title">
+                <p>{{ item.nome_veiculo }}</p>
               </div>
-              <div class="right">
-                <div class="localizacao">
-                  <n-icon size="12px" :component="Location20Regular" />
-                  <p>{{ item.cidade }} - {{ item.estado }}</p>
-                </div>
-                <div class="cambio">
-                  <n-icon size="12px" :component="ManualGearbox" />
-                  <p>{{ item.tipo_cambio }}</p>
-                </div>
+              <div class="preco">
+                <p>R$ {{ item.preco }}</p>
               </div>
             </div>
+            <n-divider style="margin: 0" />
+            <div class="bottom">
+              <div class="info">
+                <div class="left">
+                  <div class="quilometragem">
+                    <n-icon size="12px" :component="TopSpeed20Regular" />
+                    <p>{{ item.quilometragem }} km</p>
+                  </div>
+                  <div class="ano-modelo">
+                    <n-icon size="12px" :component="DateRangeTwotone" />
+                    <p>{{ item.ano_modelo }}</p>
+                  </div>
+                </div>
+                <div class="right">
+                  <div class="localizacao">
+                    <n-icon size="12px" :component="Location20Regular" />
+                    <p>{{ item.cidade }} - {{ item.estado }}</p>
+                  </div>
+                  <div class="cambio">
+                    <n-icon size="12px" :component="ManualGearbox" />
+                    <p>{{ item.tipo_cambio }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </n-card>
+        </n-card>
+      </div>
+    </div>
+    <div class="button">
+      <n-button
+        type="primary"
+        size="large"
+        style="margin-top: 10px"
+        text-color="#20284f"
+        color="#f6bd17"
+      >
+        <RouterLink class="link" to="/ofertas">Ver mais</RouterLink>
+      </n-button>
     </div>
   </div>
   <!-- <n-button @click="printarDetalhes()"> </n-button> -->
@@ -113,6 +129,20 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.button {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+  margin-bottom: 2rem;
+  margin-left: 5rem;
+  font-family: "Paytone one";
+}
+.link {
+  text-decoration: none;
+  color: #20284f;
+}
 .cards {
   width: calc(
     60vh - 20px
@@ -123,6 +153,16 @@ onMounted(async () => {
   justify-content: center;
   align-items: center;
   box-shadow: 0.25rem 0.25rem 1rem 0 #73738040;
+}
+
+.container-cards {
+  max-width: 200vh;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 
 .card-image {
@@ -142,6 +182,8 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #0f122b;
+  flex-direction: column;
 }
 
 .details {
@@ -174,9 +216,6 @@ onMounted(async () => {
   align-items: center;
 }
 
-.top {
-
-}
 .right {
   display: flex;
   flex-direction: column;
@@ -211,5 +250,17 @@ onMounted(async () => {
   align-items: center;
   font-size: 12px;
   gap: 5px;
+}
+
+.container-title {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  color: #f6bd17;
+  font-family: "Hind";
+  font-size: 65px;
+  margin-left: 5rem;
+  height: 100%;
 }
 </style>

@@ -29,7 +29,9 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  height: 100vh;
 }
+
 .left-side {
   width: 100%;
   margin-left: 20px;
