@@ -1,18 +1,18 @@
 export interface VeiculoComLocalizacao {
     placa_carro: string;
-    nome_veiculo?: string | null;
-    modelo?: string | null;
-    preco?: number | null;
-    quilometragem?: number | null;
-    tipo_cambio?: string | null;
-    ano_modelo?: number | null;
-    cor?: string | null;
-    tipo_combustivel?: string | null;
-    categoria?: string | null;
-    quantidade_portas?: number | null;
-    endereco?: string | null;
-    cidade?: string | null;
-    estado?: string | null;
-    pais?: string | null;
+    nome_veiculo?: string ;
+    modelo?: string ;
+    preco?: number ;
+    quilometragem?: number ;
+    tipo_cambio?: string ;
+    ano_modelo?: number ;
+    cor?: string ;
+    tipo_combustivel?: string ;
+    categoria?: string ;
+    quantidade_portas?: number ;
+    endereco?: string ;
+    cidade?: string ;
+    estado?: string ;
+    pais?: string ;
 }
 
