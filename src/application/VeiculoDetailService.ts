@@ -23,7 +23,7 @@ export default class VeiculoDetailService {
         }
     }
 
-    static async listarDetalhesById(id: number) {
+    static async listarDetalhesById(id: string) {
         try {
             const response = await Axios.get(`${API_BASE_URL}/veiculo-detail/${id}`);
             return response.data;

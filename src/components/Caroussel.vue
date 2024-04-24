@@ -62,6 +62,7 @@ onMounted(async () => {
     </div>
     <div class="container-cards">
       <div class="cards" v-for="(item, index) in listaPaginadaCarros">
+        <router-link :to="{ name: 'Carro', params: { id: item.placa_carro } }" style="text-decoration: none">
         <n-card class="card">
           <template #cover class="cover">
             <div class="card-image">
@@ -104,6 +105,7 @@ onMounted(async () => {
             </div>
           </div>
         </n-card>
+      </router-link>
       </div>
     </div>
     <div class="button">
