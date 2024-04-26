@@ -9,14 +9,20 @@ import { ManualGearbox, Gauge } from "@vicons/tabler";
 import { FormatPaintFilled, LocalGasStationRound } from "@vicons/material";
 import ImageService from "@/application/ImagemService";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { Navigation } from "swiper/modules";
+import { Navigation, Thumbs } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import { Swiper as SwiperType } from "swiper";
 
 //refs
 const veiculoDetail = ref<VeiculoComLocalizacao>();
 const listaImagens = ref<string[]>([]);
-const modules = [Navigation];
+const modules = [Navigation, Thumbs]; // Adicionado Thumbs à lista de módulos
+const thumbsSwiper = ref<SwiperType>(); // Adicionado para o Swiper das miniaturas
+
+const setThumbsSwiper = (swiper: SwiperType) => {
+  thumbsSwiper.value = swiper;
+};
 
 //functions
 
@@ -64,16 +70,12 @@ onMounted(() => {
         <div v-if="listaImagens.length > 0">
           <swiper
             :navigation="true"
-            :slidesPerView="1"
             :loop="true"
             :modules="modules"
             :spaceBetween="40"
+            :thumbs="{ swiper: thumbsSwiper }"
             class="mySwiper"
-            style="
-              width: 100%;
-              max-width: 90vh;
-              height: 560px;
-            "
+            style="width: 100%; max-width: 90vh; height: 560px"
           >
             <swiper-slide
               v-for="imagem in listaImagens"
@@ -87,11 +89,39 @@ onMounted(() => {
                 max-width: 200vh;
               "
             >
-              <img :src="imagem" style="object-fit: contain; width: 100%; height: 100%; max-width: 200vh; aspect-ratio: auto" />
+              <img
+                :src="imagem"
+                style="
+                  object-fit: contain;
+                  width: 100%;
+                  height: 100%;
+                  max-width: 200vh;
+                  aspect-ratio: auto;
+                "
+              />
+            </swiper-slide>
+          </swiper>
+          <swiper
+            @swiper="setThumbsSwiper"
+            :loop="true"
+            :spaceBetween="10"
+            :slidesPerView="4"
+            :freeMode="true"
+            :watchSlidesProgress="true"
+            :modules="modules"
+            class="mySwiper2"
+            style="width: 100%; max-width: 90vh; height: 80px"
+          >
+            <swiper-slide v-for="imagem in listaImagens" :key="imagem">
+              <img
+                :src="imagem"
+                style="width: 100%; height: 100%; object-fit: cover"
+              />
             </swiper-slide>
           </swiper>
         </div>
       </div>
+      <n-divider />
       <div class="container-info">
         <div class="ano">
           <n-icon class="icon" size="24px" :component="Calendar" />
@@ -150,6 +180,20 @@ onMounted(() => {
           </div>
         </div>
       </div>
+      <n-divider />
+      <div class="endereco">
+        <p
+        style="font-size: 20px; font-weight: 600; margin-bottom: 10px"
+        >Disponível em {{ veiculoDetail.cidade }}</p>
+        <div class="disponibilidade">
+          <h3>{{ veiculoDetail.cidade }}</h3>
+          <p>{{ veiculoDetail.endereco }} - {{veiculoDetail.cidade}} - {{ veiculoDetail.estado}}</p>
+          <n-divider />
+          <h4>Horário de funcionamento</h4>
+          <p>Dias úteis das 8h às 18h</p>
+          <p>Fins de Semana e feriados das 8h às 14h</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -200,5 +244,21 @@ onMounted(() => {
   border-radius: 25%; /* Raio do border-radius */
   padding: 5px; /* Espaçamento interno */
   background-color: #f6bd17;
+}
+
+.title {
+  font-family: "Paytone one";
+  color: #20284f;
+  font-size: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.disponibilidade{
+  border: 1px solid #ced4da;
+  box-sizing: border-box;
+  padding: 24px;
+  border-radius: 8px;
 }
 </style>
