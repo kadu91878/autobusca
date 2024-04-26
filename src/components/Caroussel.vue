@@ -10,7 +10,7 @@ import { ManualGearbox } from "@vicons/tabler";
 
 //refs
 const listaPlacas = ref([]);
-const listaImagens = ref([]);
+const listaImagens = ref<{imagens: string[]}[]>([]);
 const listaPaginadaCarros = ref<VeiculoComLocalizacao[]>([]);
 
 //functions
@@ -27,7 +27,7 @@ async function getPlacas() {
 async function getImages(placa: string) {
   try {
     const imagens = await ImagemService.carregarImagens(placa);
-    listaImagens.value.push(imagens);
+    listaImagens.value.push({imagens});
     // console.log("Imagens para placa", placa, ":", imagens);
   } catch (error) {
     console.error("Erro ao carregar imagens para placa", placa, ":", error);
