@@ -27,8 +27,9 @@ async function getPlacas() {
 async function getImages(placa: string) {
   try {
     const imagens = await ImagemService.carregarImagens(placa);
-    listaImagens.value.push({imagens});
+    listaImagens.value.push(imagens);
     // console.log("Imagens para placa", placa, ":", imagens);
+    console.log(listaImagens.value);
   } catch (error) {
     console.error("Erro ao carregar imagens para placa", placa, ":", error);
   }
@@ -38,6 +39,7 @@ async function getListaPaginadaCarros() {
   try {
     const data = await VeiculoDetailService.listarDetalhesPaginado();
     listaPaginadaCarros.value = data;
+    // console.log(listaPaginadaCarros.value);
   } catch (error) {
     console.error("Erro ao obter lista de carros:", error);
   }
@@ -60,7 +62,7 @@ onMounted(async () => {
     <div class="container-title">
       <p>Confira nossas ofertas</p>
     </div>
-    <div class="container-cards">
+    <div class="container-cards" v-if="listaPaginadaCarros">
       <div class="cards" v-for="(item, index) in listaPaginadaCarros">
         <router-link :to="{ name: 'Carro', params: { id: item.placa_carro } }" style="text-decoration: none">
         <n-card class="card">
@@ -186,6 +188,7 @@ onMounted(async () => {
   align-items: center;
   background-color: #0f122b;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .details {

@@ -14,13 +14,13 @@ const busca = ref("");
         <img src="../assets/logo.png" alt="" />
       </div>
       <div class="_title">
-        <h1>AutoBusca</h1>
+        <RouterLink class="link" to="/"><h1>AutoBusca</h1> </RouterLink>
       </div>
     </div>
     <div class="left-side">
       <div class="links">
         <RouterLink class="link" to="/">Quero Comprar</RouterLink>
-        <RouterLink class="link"  to="/">Home</RouterLink>
+        <RouterLink class="link" to="/">Home</RouterLink>
         <RouterLink class="link" to="/about">About</RouterLink>
         <RouterLink class="link" to="/contact">Contact</RouterLink>
         <RouterLink class="link" to="/login">Login</RouterLink>
@@ -79,19 +79,19 @@ const busca = ref("");
   }
 }
 
-.link{
+.link {
   text-decoration: none;
-  font-family: 'Paytone one';
+  font-family: "Paytone one";
   font-weight: 900;
   color: black;
   font-size: 15px;
 }
 
-.link:hover{
+.link:hover {
   color: #fff;
 }
 
-._title{
-    font-family: 'Paytone one';
+._title {
+  font-family: "Paytone one";
 }
 </style>

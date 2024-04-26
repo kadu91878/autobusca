@@ -158,7 +158,7 @@ onMounted(() => {
         <div class="quilometragem">
           <n-icon class="icon" size="24px" :component="Gauge" />
           <div class="text">
-            {{ veiculoDetail.quilometragem }}
+            {{ veiculoDetail.quilometragem }} km
             <br />
             Quilometragem
           </div>
