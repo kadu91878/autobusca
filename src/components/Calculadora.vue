@@ -12,7 +12,7 @@
           color="#f6bd17"
           text-color="#20284f"
         >
-          <RouterLink class="link" to="/calculadora">Calcular</RouterLink>
+          <RouterLink class="link" to="/financiamento">Calcular</RouterLink>
         </n-button>
       </div>
     </div>
