@@ -38,22 +38,22 @@ async function getVeiculo(id: string) {
 async function getImages(placa: string) {
   try {
     const imagens = await ImageService.carregarImagens(placa);
-    listaImagens.value = imagens.imagens;
-    listaImagens.value.forEach((element) => {
-      console.log(element);
-    });
+    listaImagens.value = imagens[placa];
+    // listaImagens.value.forEach((element) => {
+    //   console.log(element);
+    // });
   } catch (error) {
     console.error("Erro ao carregar imagens:", error);
   }
 }
 
 onMounted(() => {
-  console.log("aqui");
   try {
     const id: string = window.location.href.split("/").pop() || "";
     console.log(id);
     getVeiculo(id);
     getImages(id);
+    console.log(listaImagens.value);
   } catch (error) {
     console.error("Erro ao carregar detalhes do produto:", error);
   }

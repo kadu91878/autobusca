@@ -7,31 +7,26 @@ import type { VeiculoComLocalizacao } from "@/types/VeiculoLocalizacao";
 import { TopSpeed20Regular, Location20Regular } from "@vicons/fluent";
 import { DateRangeTwotone } from "@vicons/material";
 import { ManualGearbox } from "@vicons/tabler";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
 
 //refs
-const listaPlacas = ref([]);
-const listaImagens = ref<{imagens: string[]}[]>([]);
+
+const listaImagens = ref<Record<string, string[]>>({});
 const listaPaginadaCarros = ref<VeiculoComLocalizacao[]>([]);
+const modules = [Navigation];
+const domKey = ref(0);
+const carregado = ref(false);
+const imagensCarregadas = ref(0);
 
-//functions
-async function getPlacas() {
+async function getImages() {
   try {
-    const data = await ImagemService.listarPlacas();
-    listaPlacas.value = data;
-    // console.log(listaPlacas.value);
+    const data = await ImagemService.carregarImagens();
+    listaImagens.value = data;
   } catch (error) {
-    console.error("Erro ao obter lista de placas:", error);
-  }
-}
-
-async function getImages(placa: string) {
-  try {
-    const imagens = await ImagemService.carregarImagens(placa);
-    listaImagens.value.push(imagens);
-    // console.log("Imagens para placa", placa, ":", imagens);
-    console.log(listaImagens.value);
-  } catch (error) {
-    console.error("Erro ao carregar imagens para placa", placa, ":", error);
+    console.error("Erro ao carregar imagens:", error);
   }
 }
 
@@ -45,16 +40,23 @@ async function getListaPaginadaCarros() {
   }
 }
 
-async function printarDetalhes() {
-  await getListaPaginadaCarros();
-  console.log(listaPaginadaCarros.value);
+function reloadDOM() {
+  domKey.value++;
 }
 
 onMounted(async () => {
-  await getPlacas();
-  await Promise.all(listaPlacas.value.map((placa) => getImages(placa)));
+  // await getPlacas();
+  await getImages();
   await getListaPaginadaCarros();
-  console.log(listaPaginadaCarros.value[0].ano_modelo);
+  reloadDOM();
+  carregado.value = true;
+});
+
+onBeforeMount(() => {
+  // Antes de montar a página, limpa os estados
+  listaImagens.value = {};
+  imagensCarregadas.value = 0;
+  carregado.value = false;
 });
 </script>
 <template>
@@ -62,74 +64,95 @@ onMounted(async () => {
     <div class="container-title">
       <p>Confira nossas ofertas</p>
     </div>
-    <div class="container-cards" v-if="listaPaginadaCarros">
-      <div class="cards" v-for="(item, index) in listaPaginadaCarros">
-        <router-link :to="{ name: 'Carro', params: { id: item.placa_carro } }" style="text-decoration: none">
-        <n-card class="card">
-          <template #cover class="cover">
-            <div class="card-image">
-              <img :src="listaImagens[index].imagens[0]" alt="" />
-            </div>
-          </template>
-          <div class="details">
-            <div class="top">
-              <div class="title">
-                <p>{{ item.nome_veiculo }}</p>
-              </div>
-              <div class="preco">
-                <p>R$ {{ item.preco }}</p>
-              </div>
-            </div>
-            <n-divider style="margin: 0" />
-            <div class="bottom">
-              <div class="info">
-                <div class="left">
-                  <div class="quilometragem">
-                    <n-icon size="12px" :component="TopSpeed20Regular" />
-                    <p>{{ item.quilometragem }} km</p>
+    <div class="swiper" v-if="carregado" :key="domKey">
+      <div class="container-cards" v-if="listaPaginadaCarros">
+        <Swiper
+          :navigation="true"
+          :loop="true"
+          :modules="modules"
+          :spaceBetween="40"
+          :slidesPerView="4"
+          :freeMode="true"
+        >
+          <SwiperSlide
+            class="cards"
+            v-for="(item, index) in listaPaginadaCarros"
+            :key="index"
+          >
+            <router-link
+              :to="{ name: 'Carro', params: { id: item.placa_carro } }"
+              style="text-decoration: none"
+            >
+              <n-card
+                class="card"
+                style="
+                  box-shadow: 0 4px 8px #73738040; /* Ajuste do box-shadow */
+                "
+              >
+                <template #cover class="cover">
+                  <div class="card-image">
+                    <img
+                      :src="
+                        listaImagens[item.placa_carro][0] ||
+                        'default-image-path.jpg'
+                      "
+                      alt=""
+                    />
                   </div>
-                  <div class="ano-modelo">
-                    <n-icon size="12px" :component="DateRangeTwotone" />
-                    <p>{{ item.ano_modelo }}</p>
+                </template>
+                <div class="details">
+                  <div class="top">
+                    <div class="title">
+                      <p>{{ item.nome_veiculo }}</p>
+                    </div>
+                    <div class="preco">
+                      <p>R$ {{ item.preco }}</p>
+                    </div>
+                  </div>
+                  <n-divider style="margin: 0" />
+                  <div class="bottom">
+                    <div class="info">
+                      <div class="left">
+                        <div class="quilometragem">
+                          <n-icon size="12px" :component="TopSpeed20Regular" />
+                          <p>{{ item.quilometragem }} km</p>
+                        </div>
+                        <div class="ano-modelo">
+                          <n-icon size="12px" :component="DateRangeTwotone" />
+                          <p>{{ item.ano_modelo }}</p>
+                        </div>
+                      </div>
+                      <div class="right">
+                        <div class="localizacao">
+                          <n-icon size="12px" :component="Location20Regular" />
+                          <p>{{ item.cidade }} - {{ item.estado }}</p>
+                        </div>
+                        <div class="cambio">
+                          <n-icon size="12px" :component="ManualGearbox" />
+                          <p>{{ item.tipo_cambio }}</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="right">
-                  <div class="localizacao">
-                    <n-icon size="12px" :component="Location20Regular" />
-                    <p>{{ item.cidade }} - {{ item.estado }}</p>
-                  </div>
-                  <div class="cambio">
-                    <n-icon size="12px" :component="ManualGearbox" />
-                    <p>{{ item.tipo_cambio }}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </n-card>
-      </router-link>
+              </n-card>
+            </router-link>
+          </SwiperSlide>
+        </Swiper>
+      </div>
+      <div class="button">
+        <n-button
+          type="primary"
+          size="large"
+          style="margin-top: 10px"
+          text-color="#20284f"
+          color="#f6bd17"
+        >
+          <RouterLink class="link" to="/ofertas">Ver mais</RouterLink>
+        </n-button>
       </div>
     </div>
-    <div class="button">
-      <n-button
-        type="primary"
-        size="large"
-        style="margin-top: 10px"
-        text-color="#20284f"
-        color="#f6bd17"
-      >
-        <RouterLink class="link" to="/ofertas">Ver mais</RouterLink>
-      </n-button>
-    </div>
   </div>
-  <!-- <n-button @click="printarDetalhes()"> </n-button> -->
-  <!-- <n-carousel show-arrow>
-      <img
-        v-for="(img, index) in listaImagens"
-        class="carousel-img"
-        :src="img.imagens[0]"
-      />
-    </n-carousel> -->
 </template>
 
 <style scoped>
@@ -148,15 +171,11 @@ onMounted(async () => {
   color: #20284f;
 }
 .cards {
-  width: calc(
-    60vh - 20px
-  ); /* ajuste a largura do card para ser 25% da altura da tela (menos a margem) */
-  max-width: 312px; /* tamanho máximo do card */
+  width: 100%;
   margin: 3px;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0.25rem 0.25rem 1rem 0 #73738040;
 }
 
 .container-cards {

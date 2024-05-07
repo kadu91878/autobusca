@@ -13,9 +13,9 @@ export default class ImageService {
     }
   }
 
-  static async carregarImagens(placa:string) {
+  static async carregarImagens() {
     try {
-      const response = await Axios.get(`${API_BASE_URL}/carregar-imagens/${placa}/`);
+      const response = await Axios.get(`${API_BASE_URL}/carregar-imagens/`);
       return response.data;
     } catch (error) {
       console.error("Erro ao carregar imagens:", error);
