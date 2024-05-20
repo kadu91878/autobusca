@@ -21,6 +21,11 @@ const router = createRouter({
       name: 'Carro',
       component: CarView,
       props: true
+    },
+    {
+      path: '/busca',
+      name: 'Busca',
+      component: () => import('../views/BuscaView.vue')
     }
   ]
 })
